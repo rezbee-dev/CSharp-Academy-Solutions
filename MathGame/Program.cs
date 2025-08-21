@@ -45,6 +45,7 @@ class Program
       else if (menuInput.ToUpper().StartsWith('A') || menuInput.StartsWith('1'))
       {
         Console.WriteLine("Addition selected!");
+        Game();
       }
       else if (menuInput.ToUpper().StartsWith('S') || menuInput.StartsWith('2'))
       {
@@ -77,39 +78,34 @@ class Program
     return (random.Next(100) + 1, random.Next(100) + 1);
   }
 
-  static (string exercise, int answer) GenerateAdditionExercise()
+  static string CheckAnswer(string? rawInput, int answer)
   {
-    var nums = GenerateRandomGameNumbers();
-    var exercise = $"{nums.Item1} + {nums.Item2} = ?";
-    var answer = nums.Item1 + nums.Item2;
-    return (exercise, answer);
-  }
 
-  static void CheckAnswer(string rawInput, int answer)
-  {
     int input;
 
     try
     {
       input = int.Parse(rawInput);
     }
-    catch (Exception e) when (e is FormatException || e is OverflowException)
+    catch (Exception e) when (e is ArgumentNullException || e is OverflowException || e is FormatException)
     {
-      Console.WriteLine("Invalid input entereed, please try again!");
-      return;
+      return "Invalid input entered, please try again!";
     }
 
-    if (input == answer)
-    {
-      Console.WriteLine("Correct!");
-      return;
-    }
-
-    Console.WriteLine("Incorrect answer entered");
-    return;
+    return input == answer ? "Correct!": "Incorrect...";
   }
 
-  enum O
+  static void Game()
+  {
+    var nums = GenerateRandomGameNumbers();
+    var exercise = $"{nums.Item1} + {nums.Item2} = ";
+    var answer = nums.Item1 + nums.Item2;
+    Console.Write(exercise);
+    var input = Console.ReadLine();
+    Console.WriteLine($"\n{CheckAnswer(input, answer)}");
+  }
+
+  enum OP
   {
     MATH,
     SUBTRACTION,
